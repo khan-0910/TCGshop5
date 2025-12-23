@@ -460,51 +460,7 @@
     <script src="js/api-config.js"></script>
     <script src="js/data.js"></script>
     <script src="js/admin.js"></script>
-    <script>
-        // Admin password protection
-        const ADMIN_PASSWORD = 'aydin200@'; // Change this to your desired password
-
-        // Check if already logged in
-        window.addEventListener('DOMContentLoaded', function() {
-            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
-            if (isLoggedIn === 'true') {
-                showAdminPanel();
-            }
-        });
-
-        // Check password
-        function checkPassword(event) {
-            event.preventDefault();
-            const password = document.getElementById('admin-password').value;
-            
-            if (password === ADMIN_PASSWORD) {
-                sessionStorage.setItem('adminLoggedIn', 'true');
-                showAdminPanel();
-                showToast('Login successful!', 'success');
-            } else {
-                showToast('Incorrect password!', 'error');
-                document.getElementById('admin-password').value = '';
-                document.getElementById('admin-password').focus();
-            }
-        }
-
-        // Show admin panel
-        function showAdminPanel() {
-            document.getElementById('admin-login').style.display = 'none';
-            document.getElementById('admin-content').style.display = 'block';
-        }
-
-        // Logout
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                sessionStorage.removeItem('adminLoggedIn');
-                document.getElementById('admin-login').style.display = 'flex';
-                document.getElementById('admin-content').style.display = 'none';
-                document.getElementById('admin-password').value = '';
-                showToast('Logged out successfully', 'success');
-            }
-        }
-    </script>
 </body>
 </html>
+
 
