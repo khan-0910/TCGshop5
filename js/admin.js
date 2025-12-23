@@ -144,92 +144,107 @@ function editProduct(productId) {
 async function deleteProduct(productId) {
     const product = dataManager.getProductById(productId);
     if (!product) return;
-    
+
     if (!confirm(`Are you sure you want to delete "${product.name}"?`)) {
         return;
     }
 
     try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/api/products/${productId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        const response = await fetch(`/api/products/${productId}`, {
+            method: 'DELETE'
         });
 
         if (!response.ok) {
-            throw new Error('Failed to delete product');
+            const text = await response.text();
+            throw new Error(text || 'Failed to delete product');
         }
 
         showToast('Product deleted successfully', 'success');
-        
+
         // Reload products from backend
         await dataManager.refreshProducts();
         loadProductsTable();
         updateStatistics();
+
     } catch (error) {
         console.error('Error deleting product:', error);
         showToast('Failed to delete product. Please try again.', 'error');
     }
 }
 
+
 // Save product (add or update)
 async function saveProduct(event) {
     event.preventDefault();
-    
+
     const productData = {
-        name: document.getElementById('product-name').value,
-        price: parseFloat(document.getElementById('product-price').value),
-        stock: parseInt(document.getElementById('product-stock').value),
-        marketPrice: parseFloat(document.getElementById('product-market-price').value),
-        description: document.getElementById('product-description').value,
-        marketUrl: document.getElementById('product-market-url').value,
-        marketSource: document.getElementById('product-market-source').value,
+        name: document.getElementById('product-name').value.trim(),
+        price: Number(document.getElementById('product-price').value),
+        stock: Number(document.getElementById('product-stock').value),
+        marketPrice: Number(document.getElementById('product-market-price').value),
+        description: document.getElementById('product-description').value.trim(),
+        marketUrl: document.getElementById('product-market-url').value.trim(),
+        marketSource: document.getElementById('product-market-source').value.trim(),
         category: document.getElementById('product-category').value,
-        image: currentImageData || document.getElementById('product-image-url').value || 'https://via.placeholder.com/300x420?text=No+Image'
+        image:
+            currentImageData ||
+            document.getElementById('product-image-url').value.trim() ||
+            'https://via.placeholder.com/300x420?text=No+Image'
     };
-    
-    // Validate market price
+
+    // Basic validation
+    if (!productData.name || isNaN(productData.price)) {
+        showToast('Please fill all required fields', 'error');
+        return;
+    }
+
+    // Market price warning
     if (productData.marketPrice < productData.price) {
-        if (!confirm('Market price is lower than your price. This means your price is above market value. Continue anyway?')) {
+        if (!confirm('Market price is lower than your price. Continue anyway?')) {
             return;
         }
     }
-    
+
     try {
         let response;
-        
+
         if (currentEditingId) {
-            // Update existing product
-            response = await fetch(`${API_CONFIG.BASE_URL}/api/products/${currentEditingId}`, {
+            // UPDATE product
+            response = await fetch(`/api/products/${currentEditingId}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(productData)
             });
-            
-            if (!response.ok) {
-                throw new Error('Failed to update product');
-            }
-            
-            showToast('Product updated successfully', 'success');
         } else {
-            // Add new product
-            response = await fetch(`${API_CONFIG.BASE_URL}/api/products`, {
+            // CREATE product
+            response = await fetch(`/api/products`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(productData)
             });
-            
-            if (!response.ok) {
-                throw new Error('Failed to add product');
-            }
-            
-            showToast('Product added successfully', 'success');
         }
+
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(text || 'Save failed');
+        }
+
+        showToast(
+            currentEditingId ? 'Product updated successfully' : 'Product added successfully',
+            'success'
+        );
+
+        await dataManager.refreshProducts();
+        cancelForm();
+        loadProductsTable();
+        updateStatistics();
+
+    } catch (error) {
+        console.error('Error saving product:', error);
+        showToast('Failed to save product. Please try again.', 'error');
+    }
+}
+
         
         // Reload products from backend
         await dataManager.refreshProducts();
@@ -557,3 +572,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
