@@ -4,7 +4,6 @@
 const API_CONFIG = {
     // Backend API Base URL
     BASE_URL: 'https://backend-for-tcgshop.onrender.com',
-    baseURL: 'https://backend-for-tcgshop.onrender.com',
     
     // API Endpoints
     endpoints: {
@@ -64,3 +63,4 @@ async function apiRequest(endpoint, options = {}) {
         throw error;
     }
 }
+
