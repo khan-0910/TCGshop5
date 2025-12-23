@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Froakie TCG</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .breadcrumb {
+            padding: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            margin: 0 0.5rem;
+            color: #999;
+        }
+
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-image-section {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .product-main-image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+            cursor: zoom-in;
+        }
+
+        .product-main-image img {
+            max-width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+            transition: transform 0.3s;
+        }
+
+        .product-main-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-info-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .product-title {
+            font-size: 2rem;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        .product-category-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .price-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .price-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .price-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .our-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .market-price {
+            font-size: 1.2rem;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .savings-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .stock-section {
+            padding: 1rem;
+            background: #e8f5e9;
+            border-left: 4px solid var(--success-color);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+        }
+
+        .stock-section.out-of-stock {
+            background: #ffebee;
+            border-left-color: var(--danger-color);
+        }
+
+        .stock-text {
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .stock-text.out {
+            color: var(--danger-color);
+        }
+
+        .quantity-section {
+            margin-bottom: 2rem;
+        }
+
+        .quantity-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .quantity-controls button {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .quantity-controls button:hover {
+            background: #2980b9;
+        }
+
+        .quantity-controls button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .quantity-controls input {
+            width: 80px;
+            text-align: center;
+            padding: 0.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-add-cart {
+            padding: 1rem;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-add-cart:hover {
+            background: #229954;
+        }
+
+        .btn-add-cart:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .btn-wishlist {
+            padding: 1rem;
+            background: white;
+            color: var(--danger-color);
+            border: 2px solid var(--danger-color);
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-wishlist:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-wishlist.in-wishlist {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .market-link-section {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-market-link {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-market-link:hover {
+            background: #2980b9;
+        }
+
+        .related-products {
+            margin-top: 4rem;
+        }
+
+        .related-products h2 {
+            color: var(--dark-color);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Dark Mode */
+        body.dark-mode .product-info-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        body.dark-mode .product-title,
+        body.dark-mode .quantity-section label,
+        body.dark-mode .price-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        body.dark-mode .product-description {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        body.dark-mode .price-section {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        body.dark-mode .quantity-controls input {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode .btn-wishlist {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        body.dark-mode .market-link-section {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 968px) {
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .product-image-section {
+                position: static;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>💧 Froakie TCG</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="index.html">Home</a>
+            <span>›</span>
+            <span id="breadcrumb-category">Products</span>
+            <span>›</span>
+            <span id="breadcrumb-product">Product Details</span>
+        </div>
+    </div>
+
+    <!-- Product Detail -->
+    <div class="product-detail-container">
+        <div class="product-detail-grid">
+            <!-- Product Image -->
+            <div class="product-image-section">
+                <div class="product-main-image" id="product-image">
+                    <img id="product-img" src="" alt="Product Image">
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info-section">
+                <span class="product-category-badge" id="product-category">Category</span>
+                <h1 class="product-title" id="product-name">Product Name</h1>
+                <p class="product-description" id="product-description">Product description will appear here.</p>
+
+                <!-- Price Section -->
+                <div class="price-section">
+                    <div class="price-row">
+                        <span class="price-label">Our Price:</span>
+                        <span class="our-price" id="product-price">₹0.00</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price-label">Market Price:</span>
+                        <span class="market-price" id="product-market-price">₹0.00</span>
+                    </div>
+                    <div class="price-row" id="savings-row" style="display: none;">
+                        <span class="price-label">You Save:</span>
+                        <span class="savings-badge" id="product-savings">₹0.00 (0%)</span>
+                    </div>
+                </div>
+
+                <!-- Stock Section -->
+                <div class="stock-section" id="stock-section">
+                    <span class="stock-text" id="stock-text">In Stock</span>
+                </div>
+
+                <!-- Quantity Section -->
+                <div class="quantity-section">
+                    <label for="quantity">Quantity:</label>
+                    <div class="quantity-controls">
+                        <button onclick="decreaseQuantity()">-</button>
+                        <input type="number" id="quantity" value="1" min="1" readonly>
+                        <button onclick="increaseQuantity()" id="increase-btn">+</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn-add-cart" id="add-to-cart-btn" onclick="addToCart()">
+                        Add to Cart
+                    </button>
+                    <button class="btn-wishlist" id="wishlist-btn" onclick="toggleWishlist()">
+                        <span id="wishlist-icon">🤍</span>
+                        <span id="wishlist-text">Add to Wishlist</span>
+                    </button>
+                </div>
+
+                <!-- Market Link -->
+                <div class="market-link-section" id="market-link-section">
+                    <a href="#" id="market-link" target="_blank" class="btn-market-link">
+                        View on <span id="market-source">TCGPlayer</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="related-products">
+            <h2>You May Also Like</h2>
+            <div class="related-grid" id="related-products-grid">
+                <!-- Related products will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>📧 Email: <a href="mailto:froakietcg0910@gmail.com">froakietcg0910@gmail.com</a></p>
+                    <p>📱 Phone: <a href="tel:+917200092054">+91 7200092054</a></p>
+                    <p>📸 Instagram: <a href="https://instagram.com/froakietcg._" target="_blank">@froakietcg._</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="privacy.html">Privacy Policy</a></p>
+                    <p><a href="terms.html">Terms & Conditions</a></p>
+                    <p><a href="shipping.html">Shipping Policy</a></p>
+                    <p><a href="refund-policy.html">Refund Policy</a></p>
+                    <p><a href="contact.html">Contact</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Froakie TCG. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/api-config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/enhancements.js"></script>
+    <script>
+        let currentProduct = null;
+        let currentQuantity = 1;
+
+        // Load product on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            await dataManager.refreshProducts();
+            loadProductDetails();
+            updateCartCount();
+        });
+
+        // Get product ID from URL
+        function getProductIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // Load product details
+        function loadProductDetails() {
+            const productId = getProductIdFromUrl();
+            
+            if (!productId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            currentProduct = dataManager.getProductById(productId);
+            
+            if (!currentProduct) {
+                showToast('Product not found', 'error');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
+
+            displayProduct();
+            loadRelatedProducts();
+            checkWishlistStatus();
+        }
+
+        // Display product
+        function displayProduct() {
+            const product = currentProduct;
+            
+            // Update breadcrumb
+            const categoryNames = {
+                'single-cards': 'Single Cards',
+                'sealed-bundles': 'Sealed Bundles',
+                'booster-boxes': 'Booster Boxes',
+                'collection-boxes': 'Collection Boxes'
+            };
+            document.getElementById('breadcrumb-category').textContent = categoryNames[product.category] || 'Products';
+            document.getElementById('breadcrumb-product').textContent = product.name;
+            
+            // Update product info
+            document.getElementById('product-img').src = product.image;
+            document.getElementById('product-img').alt = product.name;
+            document.getElementById('product-category').textContent = categoryNames[product.category] || 'Product';
+            document.getElementById('product-name').textContent = product.name;
+            document.getElementById('product-description').textContent = product.description;
+            document.getElementById('product-price').textContent = `₹${product.price.toFixed(2)}`;
+            document.getElementById('product-market-price').textContent = `₹${product.marketPrice.toFixed(2)}`;
+            
+            // Calculate savings
+            const savings = product.marketPrice - product.price;
+            const savingsPercent = ((savings / product.marketPrice) * 100).toFixed(0);
+            
+            if (savings > 0) {
+                document.getElementById('savings-row').style.display = 'flex';
+                document.getElementById('product-savings').textContent = `₹${savings.toFixed(2)} (${savingsPercent}% off!)`;
+            }
+            
+            // Update stock
+            const stockSection = document.getElementById('stock-section');
+            const stockText = document.getElementById('stock-text');
+            
+            if (product.stock > 0) {
+                stockSection.classList.remove('out-of-stock');
+                stockText.classList.remove('out');
+                stockText.textContent = `${product.stock} in stock`;
+                document.getElementById('add-to-cart-btn').disabled = false;
+            } else {
+                stockSection.classList.add('out-of-stock');
+                stockText.classList.add('out');
+                stockText.textContent = 'Out of Stock';
+                document.getElementById('add-to-cart-btn').disabled = true;
+            }
+            
+            // Update market link
+            if (product.marketUrl) {
+                document.getElementById('market-link').href = product.marketUrl;
+                document.getElementById('market-source').textContent = product.marketSource || 'Market';
+            } else {
+                document.getElementById('market-link-section').style.display = 'none';
+            }
+            
+            // Update page title
+            document.title = `${product.name} - Froakie TCG`;
+        }
+
+        // Quantity controls
+        function decreaseQuantity() {
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                document.getElementById('quantity').value = currentQuantity;
+            }
+        }
+
+        function increaseQuantity() {
+            if (currentQuantity < currentProduct.stock) {
+                currentQuantity++;
+                document.getElementById('quantity').value = currentQuantity;
+            }
+        }
+
+        // Add to cart
+        function addToCart() {
+            const result = dataManager.addToCart(currentProduct.id, currentQuantity);
+            
+            if (result.success) {
+                showToast(`Added ${currentQuantity} item(s) to cart!`, 'success');
+                updateCartCount();
+                currentQuantity = 1;
+                document.getElementById('quantity').value = 1;
+            } else {
+                showToast(result.message, 'error');
+            }
+        }
+
+        // Wishlist functions
+        function checkWishlistStatus() {
+            const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            const isInWishlist = wishlist.some(id => String(id) === String(currentProduct.id));
+            
+            if (isInWishlist) {
+                document.getElementById('wishlist-btn').classList.add('in-wishlist');
+                document.getElementById('wishlist-icon').textContent = '❤️';
+                document.getElementById('wishlist-text').textContent = 'In Wishlist';
+            }
+        }
+
+        function toggleWishlist() {
+            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            const productId = String(currentProduct.id);
+            const index = wishlist.findIndex(id => String(id) === productId);
+            
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                document.getElementById('wishlist-btn').classList.remove('in-wishlist');
+                document.getElementById('wishlist-icon').textContent = '🤍';
+                document.getElementById('wishlist-text').textContent = 'Add to Wishlist';
+                showToast('Removed from wishlist', 'info');
+            } else {
+                wishlist.push(productId);
+                document.getElementById('wishlist-btn').classList.add('in-wishlist');
+                document.getElementById('wishlist-icon').textContent = '❤️';
+                document.getElementById('wishlist-text').textContent = 'In Wishlist';
+                showToast('Added to wishlist!', 'success');
+            }
+            
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        }
+
+        // Load related products
+        function loadRelatedProducts() {
+            const allProducts = dataManager.getProducts();
+            const related = allProducts
+                .filter(p => p.id !== currentProduct.id && p.category === currentProduct.category)
+                .slice(0, 4);
+            
+            const grid = document.getElementById('related-products-grid');
+            grid.innerHTML = '';
+            
+            if (related.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: #666;">No related products found.</p>';
+                return;
+            }
+            
+            related.forEach(product => {
+                const card = createProductCard(product);
+                grid.appendChild(card);
+            });
+        }
+
+        // Create product card for related products
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.style.cursor = 'pointer';
+            card.onclick = () => window.location.href = `product-detail.html?id=${product.id}`;
+            
+            const savings = product.marketPrice - product.price;
+            const savingsPercent = ((savings / product.marketPrice) * 100).toFixed(0);
+            
+            card.innerHTML = `
+                <div class="product-image">
+                    <img src="${product.image}" alt="${product.name}">
+                    ${savings > 0 ? `<div class="savings-badge">Save ${savingsPercent}%</div>` : ''}
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">${product.name}</h3>
+                    <div class="product-price">₹${product.price.toFixed(2)}</div>
+                    <div class="stock-status ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}">
+                        ${product.stock > 0 ? `${product.stock} in stock` : 'Out of Stock'}
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const count = dataManager.getCartItemCount();
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        // Show toast
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

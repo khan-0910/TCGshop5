@@ -1,0 +1,470 @@
+BRANDING UPDATE GUIDE - Change to "Froakie_TCG's Store"
+========================================================
+
+This guide contains ALL the code snippets you need to copy and paste
+to rebrand your store to "Froakie_TCG's Store" with description and contact info.
+
+========================================================
+PART 1: UPDATE STORE NAME IN ALL PAGES
+========================================================
+
+You need to update the header in these 5 files:
+1. index.html
+2. cart.html
+3. checkout.html
+4. admin.html
+5. contact.html
+
+-----------------------------------------------------------
+FILE 1: index.html
+-----------------------------------------------------------
+
+FIND THIS CODE (around line 10-20):
+```
+<div class="logo">
+    <h1>⚡ PokéCards Store</h1>
+</div>
+```
+
+REPLACE WITH:
+```
+<div class="logo">
+    <h1>🐸 Froakie_TCG's Store</h1>
+</div>
+```
+
+ALSO FIND THIS (around line 30):
+```
+<h2>Premium Pokemon Trading Cards</h2>
+<p>Discover rare and valuable Pokemon cards with competitive pricing</p>
+```
+
+REPLACE WITH:
+```
+<h2>Welcome to Froakie_TCG's Store</h2>
+<p>Your trusted source for authentic Pokemon Trading Cards at the best prices in India</p>
+```
+
+ALSO FIND THIS (around line 90 - footer):
+```
+<footer>
+    <div class="container">
+        <p>&copy; 2025 PokéCards Store. All rights reserved.</p>
+        <p>Market prices provided by TCGPlayer and other sources</p>
+    </div>
+</footer>
+```
+
+REPLACE WITH:
+```
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Froakie_TCG's Store</h3>
+                <p>We are passionate Pokemon TCG collectors and sellers, offering authentic cards at competitive prices. Every card is carefully verified for authenticity and condition.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><strong>Email:</strong> froakietcg@gmail.com</p>
+                <p><strong>Phone:</strong> +91 XXXXX XXXXX</p>
+                <p><strong>WhatsApp:</strong> +91 XXXXX XXXXX</p>
+                <p><strong>Instagram:</strong> @froakie_tcg</p>
+            </div>
+            <div class="footer-section">
+                <h3>Business Hours</h3>
+                <p>Monday - Saturday: 10 AM - 8 PM</p>
+                <p>Sunday: 11 AM - 6 PM</p>
+                <p>We ship across India!</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Froakie_TCG's Store. All rights reserved.</p>
+            <p>Market prices provided by TCGPlayer and other sources</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-section h3 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.footer-section p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.footer-bottom {
+    padding-top: 1.5rem;
+    text-align: center;
+}
+
+.footer-bottom p {
+    margin: 0.3rem 0;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+</style>
+```
+
+-----------------------------------------------------------
+FILE 2: cart.html
+-----------------------------------------------------------
+
+FIND THIS CODE (around line 10-20):
+```
+<div class="logo">
+    <h1>⚡ PokéCards Store</h1>
+</div>
+```
+
+REPLACE WITH:
+```
+<div class="logo">
+    <h1>🐸 Froakie_TCG's Store</h1>
+</div>
+```
+
+ALSO FIND THIS (around line 80 - footer):
+```
+<footer>
+    <div class="container">
+        <p>&copy; 2025 PokéCards Store. All rights reserved.</p>
+    </div>
+</footer>
+```
+
+REPLACE WITH:
+```
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Froakie_TCG's Store</h3>
+                <p>We are passionate Pokemon TCG collectors and sellers, offering authentic cards at competitive prices. Every card is carefully verified for authenticity and condition.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><strong>Email:</strong> froakietcg@gmail.com</p>
+                <p><strong>Phone:</strong> +91 XXXXX XXXXX</p>
+                <p><strong>WhatsApp:</strong> +91 XXXXX XXXXX</p>
+                <p><strong>Instagram:</strong> @froakie_tcg</p>
+            </div>
+            <div class="footer-section">
+                <h3>Business Hours</h3>
+                <p>Monday - Saturday: 10 AM - 8 PM</p>
+                <p>Sunday: 11 AM - 6 PM</p>
+                <p>We ship across India!</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Froakie_TCG's Store. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-section h3 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.footer-section p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.footer-bottom {
+    padding-top: 1.5rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+</style>
+```
+
+-----------------------------------------------------------
+FILE 3: checkout.html
+-----------------------------------------------------------
+
+FIND THIS CODE (around line 10-20):
+```
+<div class="logo">
+    <h1>⚡ PokéCards Store</h1>
+</div>
+```
+
+REPLACE WITH:
+```
+<div class="logo">
+    <h1>🐸 Froakie_TCG's Store</h1>
+</div>
+```
+
+ALSO FIND THIS (around line 250 - footer):
+```
+<footer>
+    <div class="container">
+        <p>&copy; 2025 PokéCards Store. All rights reserved.</p>
+    </div>
+</footer>
+```
+
+REPLACE WITH:
+```
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Froakie_TCG's Store</h3>
+                <p>We are passionate Pokemon TCG collectors and sellers, offering authentic cards at competitive prices. Every card is carefully verified for authenticity and condition.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><strong>Email:</strong> froakietcg@gmail.com</p>
+                <p><strong>Phone:</strong> +91 XXXXX XXXXX</p>
+                <p><strong>WhatsApp:</strong> +91 XXXXX XXXXX</p>
+                <p><strong>Instagram:</strong> @froakie_tcg</p>
+            </div>
+            <div class="footer-section">
+                <h3>Business Hours</h3>
+                <p>Monday - Saturday: 10 AM - 8 PM</p>
+                <p>Sunday: 11 AM - 6 PM</p>
+                <p>We ship across India!</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Froakie_TCG's Store. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-section h3 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.footer-section p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.footer-bottom {
+    padding-top: 1.5rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+</style>
+```
+
+-----------------------------------------------------------
+FILE 4: admin.html (Use ADMIN_HTML_WITH_PASSWORD.txt)
+-----------------------------------------------------------
+
+In the ADMIN_HTML_WITH_PASSWORD.txt file you already have:
+
+FIND THIS CODE (around line 10-20):
+```
+<div class="logo">
+    <h1>⚡ PokéCards Store - Admin</h1>
+</div>
+```
+
+REPLACE WITH:
+```
+<div class="logo">
+    <h1>🐸 Froakie_TCG's Store - Admin</h1>
+</div>
+```
+
+ALSO FIND THIS (around line 180 - footer):
+```
+<footer>
+    <div class="container">
+        <p>&copy; 2025 PokéCards Store. All rights reserved.</p>
+    </div>
+</footer>
+```
+
+REPLACE WITH:
+```
+<footer>
+    <div class="container">
+        <p>&copy; 2025 Froakie_TCG's Store. All rights reserved.</p>
+    </div>
+</footer>
+```
+
+-----------------------------------------------------------
+FILE 5: contact.html (if you have it)
+-----------------------------------------------------------
+
+FIND THIS CODE:
+```
+<div class="logo">
+    <h1>⚡ PokéCards Store</h1>
+</div>
+```
+
+REPLACE WITH:
+```
+<div class="logo">
+    <h1>🐸 Froakie_TCG's Store</h1>
+</div>
+```
+
+========================================================
+PART 2: UPDATE RAZORPAY CONFIGURATION
+========================================================
+
+FILE: js/razorpay-config.js
+
+FIND THIS CODE:
+```
+// Store Information
+storeName: 'PokéCards Store',
+storeDescription: 'Pokemon Trading Cards Purchase',
+```
+
+REPLACE WITH:
+```
+// Store Information
+storeName: 'Froakie_TCG\'s Store',
+storeDescription: 'Pokemon Trading Cards Purchase',
+```
+
+========================================================
+PART 3: UPDATE CHECKOUT.JS
+========================================================
+
+FILE: js/checkout.js
+
+FIND THIS CODE (around line 150):
+```
+notes: {
+    store: 'PokéCards Store',
+```
+
+REPLACE WITH:
+```
+notes: {
+    store: 'Froakie_TCG\'s Store',
+```
+
+========================================================
+PART 4: UPDATE CART.JS (if not already done)
+========================================================
+
+This is already in CART_JS_FIXED.txt, but if you need to update it separately:
+
+No changes needed in cart.js for store name.
+
+========================================================
+CUSTOMIZATION INSTRUCTIONS
+========================================================
+
+REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL INFO:
+
+1. Email: froakietcg@gmail.com
+   → Replace with your actual email
+
+2. Phone: +91 XXXXX XXXXX
+   → Replace with your actual phone number
+
+3. WhatsApp: +91 XXXXX XXXXX
+   → Replace with your WhatsApp number
+
+4. Instagram: @froakie_tcg
+   → Replace with your actual Instagram handle
+
+5. Business Hours:
+   → Adjust to your actual operating hours
+
+========================================================
+SUMMARY OF CHANGES
+========================================================
+
+FILES TO UPDATE ON GITHUB:
+
+1. ✅ index.html - Store name + footer
+2. ✅ cart.html - Store name + footer
+3. ✅ checkout.html - Store name + footer
+4. ✅ admin.html - Store name + footer
+5. ✅ js/razorpay-config.js - Store name
+6. ✅ js/checkout.js - Store name in notes
+7. ✅ contact.html (if exists) - Store name
+
+========================================================
+QUICK UPDATE CHECKLIST
+========================================================
+
+For EACH file listed above:
+1. Go to GitHub repository
+2. Click on the file
+3. Click pencil icon (Edit)
+4. Find the code sections mentioned
+5. Replace with new code
+6. Commit changes
+
+========================================================
+FOOTER FEATURES
+========================================================
+
+Your new footer includes:
+✅ About section with store description
+✅ Contact information (email, phone, WhatsApp, Instagram)
+✅ Business hours
+✅ Responsive design (mobile-friendly)
+✅ Professional styling
+✅ Copyright notice
+
+========================================================

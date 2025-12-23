@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Froakie TCG - Premium Pokemon Trading Cards</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>💧 Froakie TCG</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html" class="active">Home</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropbtn">Categories ▼</a>
+                            <div class="dropdown-content">
+                                <a href="#" onclick="filterByCategory('all')">All Products</a>
+                                <a href="#" onclick="filterByCategory('single-cards')">Single Cards</a>
+                                <a href="#" onclick="filterByCategory('sealed-bundles')">Sealed Bundles</a>
+                                <a href="#" onclick="filterByCategory('booster-boxes')">Sealed Booster Boxes</a>
+                                <a href="#" onclick="filterByCategory('collection-boxes')">Special Collection Boxes</a>
+                            </div>
+                        </li>
+                        <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Premium Pokemon Trading Cards</h2>
+            <p>Discover rare and valuable Pokemon cards with competitive pricing</p>
+        </div>
+    </section>
+
+    <!-- Search and Filter -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search for Pokemon cards...">
+                <button id="search-btn">Search</button>
+            </div>
+            <div class="filter-options">
+                <select id="category-filter">
+                    <option value="all">All Categories</option>
+                    <option value="single-cards">Single Cards</option>
+                    <option value="sealed-bundles">Sealed Bundles</option>
+                    <option value="booster-boxes">Sealed Booster Boxes</option>
+                    <option value="collection-boxes">Special Collection Boxes</option>
+                </select>
+                <select id="sort-select">
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="price-asc">Price (Low to High)</option>
+                    <option value="price-desc">Price (High to Low)</option>
+                    <option value="stock-desc">Stock (High to Low)</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-section">
+        <div class="container">
+            <h2 id="category-title">Featured Products</h2>
+            <div id="products-grid" class="products-grid">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+            <div id="no-products" class="no-products" style="display: none;">
+                <p>No products found matching your search.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>📧 Email: <a href="mailto:froakietcg0910@gmail.com">froakietcg0910@gmail.com</a></p>
+                    <p>📱 Phone: <a href="tel:+917200092054">+91 7200092054</a></p>
+                    <p>📸 Instagram: <a href="https://instagram.com/froakietcg._" target="_blank">@froakietcg._</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="privacy.html">Privacy Policy</a></p>
+                    <p><a href="terms.html">Terms & Conditions</a></p>
+                    <p><a href="shipping.html">Shipping Policy</a></p>
+                    <p><a href="refund-policy.html">Refund Policy</a></p>
+                    <p><a href="contact.html">Contact</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Categories</h3>
+                    <p><a href="#" onclick="filterByCategory('single-cards')">Single Cards</a></p>
+                    <p><a href="#" onclick="filterByCategory('sealed-bundles')">Sealed Bundles</a></p>
+                    <p><a href="#" onclick="filterByCategory('booster-boxes')">Booster Boxes</a></p>
+                    <p><a href="#" onclick="filterByCategory('collection-boxes')">Collection Boxes</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Froakie TCG. All rights reserved.</p>
+                <p>Market prices provided by TCGPlayer and other sources</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modal-img" src="" alt="">
+                </div>
+                <div class="modal-details">
+                    <h2 id="modal-name"></h2>
+                    <p id="modal-description"></p>
+                    <div class="price-section">
+                        <div class="store-price">
+                            <span class="label">Our Price:</span>
+                            <span id="modal-price" class="price"></span>
+                        </div>
+                        <div class="market-price">
+                            <span class="label">Market Price:</span>
+                            <span id="modal-market-price" class="price"></span>
+                            <span id="modal-savings" class="savings"></span>
+                        </div>
+                    </div>
+                    <div class="stock-info">
+                        <span id="modal-stock"></span>
+                    </div>
+                    <div class="market-link">
+                        <a id="modal-market-link" href="#" target="_blank" class="btn-secondary">
+                            View on <span id="modal-market-source"></span>
+                        </a>
+                    </div>
+                    <div class="modal-actions">
+                        <button id="modal-wishlist-btn" class="btn-wishlist" onclick="toggleWishlistFromModal()">
+                            <span id="modal-wishlist-icon">🤍</span> Add to Wishlist
+                        </button>
+                        <a id="modal-detail-link" href="#" class="btn-secondary">View Full Details</a>
+                    </div>
+                    <div class="quantity-selector">
+                        <label for="modal-quantity">Quantity:</label>
+                        <input type="number" id="modal-quantity" value="1" min="1">
+                    </div>
+                    <button id="modal-add-to-cart" class="btn-primary">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/api-config.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/enhancements.js"></script>
+</body>
+</html>
