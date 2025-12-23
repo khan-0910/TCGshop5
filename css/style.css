@@ -99,9 +99,17 @@
     --bg-primary: #0f1419;
     --bg-secondary: #1a1f2e;
     --bg-tertiary: #252b3b;
+
+    /* Neutral UI greys (kept for small UI text) */
     --text-primary: #e4e6eb;
     --text-secondary: #b0b3b8;
     --text-tertiary: #8a8d91;
+
+    /* ✅ Purple-tinted text for main content */
+    --dm-text-primary: #c7b8ff;   /* Headings / titles */
+    --dm-text-secondary: #a594f9; /* Body text */
+    --dm-text-muted: #8b7ccf;     /* Labels / subtle */
+
     --border-color: #3a3f4b;
     --shadow-color: rgba(0, 0, 0, 0.5);
     
@@ -114,6 +122,7 @@
     /* Dark mode specific shadows */
     --shadow-glow: 0 0 30px rgba(93, 173, 226, 0.4);
 }
+
 
 /* ============================================
    BASE STYLES
@@ -1589,5 +1598,46 @@ footer p {
 }
 
 /* ============================================
+   DARK MODE – SOFTER PURPLE TEXT OVERRIDES
+   ============================================ */
+
+/* Headings & product titles */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] .product-name,
+[data-theme="dark"] .product-title,
+[data-theme="dark"] .cart-header h2,
+[data-theme="dark"] .cart-item-details h3,
+[data-theme="dark"] .item-subtotal,
+[data-theme="dark"] .summary-row:last-child {
+    color: var(--dm-text-primary);
+}
+
+/* Normal body text */
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] .product-description,
+[data-theme="dark"] .summary-label,
+[data-theme="dark"] .cart-item-details p {
+    color: var(--dm-text-secondary);
+}
+
+/* Muted / secondary info */
+[data-theme="dark"] .price-label,
+[data-theme="dark"] .stock-warning,
+[data-theme="dark"] .no-products {
+    color: var(--dm-text-muted);
+}
+
+/* Prices pop slightly */
+[data-theme="dark"] .product-price,
+[data-theme="dark"] .cart-item-price {
+    color: #d6ccff;
+}
+
+
+/* ============================================
    END OF ENHANCED STYLES
    ============================================ */
+
