@@ -123,10 +123,9 @@ function placeOrder() {
     
     // Calculate total
     const subtotal = dataManager.getCartTotal();
-    const tax = subtotal * 0.18;
     const delivery = deliveryCharges[selectedDelivery];
-    const total = subtotal + tax + delivery;
-    
+    const total = subtotal + delivery;
+
     // Convert to paise for Razorpay
     const amountInPaise = Math.round(total * 100);
     
@@ -150,14 +149,13 @@ async function initializeRazorpayPayment(customerInfo, amountInPaise, totalAmoun
         });
         
         const subtotal = dataManager.getCartTotal();
-        const tax = subtotal * 0.18;
-        
+
         const orderData = {
             amount: totalAmount,
             currency: RAZORPAY_CONFIG.currency,
             customerInfo: {
                 ...customerInfo,
-                tax: tax
+                tax: 0
             },
             items: items
         };
