@@ -70,23 +70,13 @@ function loadCart() {
     
     // Add cart summary
     const total = dataManager.getCartTotal();
-    const tax = total * 0.18; // 18% GST
-    const grandTotal = total + tax;
-    
+
     cartHTML += `
         <div class="cart-summary">
             <h3>Order Summary</h3>
             <div class="summary-row">
-                <span class="summary-label">Subtotal:</span>
-                <span>₹${total.toFixed(2)}</span>
-            </div>
-            <div class="summary-row">
-                <span class="summary-label">Tax (18% GST):</span>
-                <span>₹${tax.toFixed(2)}</span>
-            </div>
-            <div class="summary-row">
                 <span class="summary-label">Total:</span>
-                <span>₹${grandTotal.toFixed(2)}</span>
+                <span>₹${total.toFixed(2)}</span>
             </div>
             <div class="checkout-section">
                 <button class="btn-checkout" onclick="checkout()">Proceed to Checkout</button>
@@ -164,12 +154,22 @@ function updateCartCount() {
     document.getElementById('cart-count').textContent = count;
 }
 
+// Clear entire cart
+function clearCart() {
+    if (confirm('Are you sure you want to clear your entire cart?')) {
+        dataManager.clearCart();
+        showToast('Cart cleared!', 'success');
+        loadCart();
+        updateCartCount();
+    }
+}
+
 // Show toast notification
 function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.className = `toast ${type} show`;
-    
+
     setTimeout(() => {
         toast.className = 'toast';
     }, 3000);
