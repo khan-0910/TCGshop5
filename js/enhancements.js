@@ -1,396 +1,290 @@
 // Froakie TCG Store - Enhancement Features
-// Dark Mode, Wishlist, Animations, and Interactive Features
+// Dark Mode, Animations, Recently Viewed, and UI Enhancements
 
 /* ============================================
    INITIALIZATION
    ============================================ */
-document.addEventListener('DOMContentLoaded', function() {
-    initializeEnhancements();
+document.addEventListener('DOMContentLoaded', function () {
+  initializeEnhancements();
 });
 
 function initializeEnhancements() {
-    // Initialize all enhancement features
-    initDarkMode();
-    initScrollEffects();
-    initWishlist();
-    initAnimations();
-    initScrollToTop();
-    initHeaderScroll();
-    initQuickActions();
-    
-    console.log('✨ Enhancements loaded successfully!');
+  initDarkMode();
+  initScrollEffects();
+  initAnimations();
+  initScrollToTop();
+  initHeaderScroll();
+  initQuickActions();
+  renderRecentlyViewed();
+
+  console.log('✨ Enhancements loaded successfully!');
 }
 
 /* ============================================
    DARK MODE TOGGLE
    ============================================ */
 function initDarkMode() {
-    // Check for saved theme preference or default to light mode
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    
-    // Create dark mode toggle button if it doesn't exist
-    if (!document.querySelector('.theme-toggle')) {
-        createThemeToggle();
-    }
-    
-    // Add event listener to toggle button
-    const themeToggle = document.querySelector('.theme-toggle');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-        updateThemeIcon(currentTheme);
-    }
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+
+  if (!document.querySelector('.theme-toggle')) {
+    createThemeToggle();
+  }
+
+  const themeToggle = document.querySelector('.theme-toggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+    updateThemeIcon(currentTheme);
+  }
 }
 
 function createThemeToggle() {
-    const nav = document.querySelector('nav ul');
-    if (!nav) return;
-    
-    const themeToggleLi = document.createElement('li');
-    themeToggleLi.innerHTML = `
-        <button class="theme-toggle" aria-label="Toggle dark mode">
-            <span class="theme-toggle-icon">🌙</span>
-            <span class="theme-toggle-text">Dark</span>
-        </button>
-    `;
-    nav.appendChild(themeToggleLi);
+  const nav = document.querySelector('nav ul');
+  if (!nav) return;
+
+  const themeToggleLi = document.createElement('li');
+  themeToggleLi.innerHTML = `
+    <button class="theme-toggle" aria-label="Toggle dark mode">
+      <span class="theme-toggle-icon">🌙</span>
+      <span class="theme-toggle-text">Dark</span>
+    </button>
+  `;
+  nav.appendChild(themeToggleLi);
 }
 
 function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
-    
-    // Show toast notification
-    showToast(`${newTheme === 'dark' ? '🌙 Dark' : '☀️ Light'} mode activated!`, 'info');
+  const currentTheme =
+    document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  updateThemeIcon(newTheme);
+
+  showToast(
+    `${newTheme === 'dark' ? '🌙 Dark' : '☀️ Light'} mode activated!`,
+    'info'
+  );
 }
 
 function updateThemeIcon(theme) {
-    const icon = document.querySelector('.theme-toggle-icon');
-    const text = document.querySelector('.theme-toggle-text');
-    
-    if (icon && text) {
-        if (theme === 'dark') {
-            icon.textContent = '☀️';
-            text.textContent = 'Light';
-        } else {
-            icon.textContent = '🌙';
-            text.textContent = 'Dark';
-        }
-    }
+  const icon = document.querySelector('.theme-toggle-icon');
+  const text = document.querySelector('.theme-toggle-text');
+  if (!icon || !text) return;
+
+  if (theme === 'dark') {
+    icon.textContent = '☀️';
+    text.textContent = 'Light';
+  } else {
+    icon.textContent = '🌙';
+    text.textContent = 'Dark';
+  }
 }
 
 /* ============================================
    SCROLL EFFECTS
    ============================================ */
 function initScrollEffects() {
-    // Fade in elements on scroll
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-    
-    // Observe product cards
-    document.querySelectorAll('.product-card').forEach(card => {
-        observer.observe(card);
-    });
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  document.querySelectorAll('.product-card').forEach((card) => {
+    observer.observe(card);
+  });
 }
 
 function initHeaderScroll() {
-    const header = document.querySelector('header');
-    if (!header) return;
-    
-    let lastScroll = 0;
-    
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-        
-        if (currentScroll > 100) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-        
-        lastScroll = currentScroll;
-    });
+  const header = document.querySelector('header');
+  if (!header) return;
+
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.pageYOffset > 100);
+  });
 }
 
 /* ============================================
-   WISHLIST FUNCTIONALITY
-   ============================================ */
-let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-
-function initWishlist() {
-    updateWishlistBadge();
-    createWishlistBadge();
-}
-
-function createWishlistBadge() {
-    if (document.querySelector('.wishlist-badge')) return;
-    
-    const badge = document.createElement('div');
-    badge.className = 'wishlist-badge';
-    badge.innerHTML = `
-        ❤️
-        <span class="wishlist-count">${wishlist.length}</span>
-    `;
-    badge.addEventListener('click', showWishlist);
-    document.body.appendChild(badge);
-}
-
-function toggleWishlist(productId) {
-    const index = wishlist.indexOf(productId);
-    
-    if (index > -1) {
-        wishlist.splice(index, 1);
-        showToast('Removed from wishlist', 'info');
-    } else {
-        wishlist.push(productId);
-        showToast('Added to wishlist! ❤️', 'success');
-    }
-    
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-    updateWishlistBadge();
-    updateWishlistButtons();
-}
-
-function updateWishlistBadge() {
-    const badge = document.querySelector('.wishlist-count');
-    if (badge) {
-        badge.textContent = wishlist.length;
-        badge.style.display = wishlist.length > 0 ? 'flex' : 'none';
-    }
-}
-
-function updateWishlistButtons() {
-    document.querySelectorAll('.wishlist-btn').forEach(btn => {
-        const productId = btn.dataset.productId;
-        if (wishlist.includes(productId)) {
-            btn.classList.add('active');
-            btn.innerHTML = '❤️';
-        } else {
-            btn.classList.remove('active');
-            btn.innerHTML = '🤍';
-        }
-    });
-}
-
-function showWishlist() {
-    if (wishlist.length === 0) {
-        showToast('Your wishlist is empty', 'info');
-        return;
-    }
-    
-    // Redirect to store page with wishlist filter
-    window.location.href = 'index.html?wishlist=true';
-}
-
-/* ============================================
-   QUICK ACTIONS
+   QUICK ACTIONS (NO WISHLIST)
    ============================================ */
 function initQuickActions() {
-    // Add quick action buttons to product cards
-    document.querySelectorAll('.product-card').forEach(card => {
-        if (!card.querySelector('.quick-actions')) {
-            addQuickActions(card);
-        }
-    });
+  document.querySelectorAll('.product-card').forEach((card) => {
+    if (!card.querySelector('.quick-actions')) {
+      addQuickActions(card);
+    }
+  });
 }
 
 function addQuickActions(card) {
-    const productImage = card.querySelector('.product-image');
-    if (!productImage) return;
-    
-    const productId = card.dataset.productId || card.querySelector('[data-product-id]')?.dataset.productId;
-    if (!productId) return;
-    
-    const quickActions = document.createElement('div');
-    quickActions.className = 'quick-actions';
-    quickActions.innerHTML = `
-        <button class="quick-action-btn wishlist-btn" data-product-id="${productId}" 
-                onclick="toggleWishlist('${productId}')" title="Add to wishlist">
-            ${wishlist.includes(productId) ? '❤️' : '🤍'}
-        </button>
-        <button class="quick-action-btn quick-view-btn" data-product-id="${productId}" 
-                onclick="quickViewProduct('${productId}')" title="Quick view">
-            👁️
-        </button>
-    `;
-    
-    productImage.appendChild(quickActions);
+  const productImage = card.querySelector('.product-image');
+  if (!productImage) return;
+
+  const productId =
+    card.dataset.productId ||
+    card.querySelector('[data-product-id]')?.dataset.productId;
+  if (!productId) return;
+
+  const quickActions = document.createElement('div');
+  quickActions.className = 'quick-actions';
+  quickActions.innerHTML = `
+    <button
+      class="quick-action-btn quick-view-btn"
+      onclick="quickViewProduct('${productId}')"
+      title="Quick view"
+    >
+      👁️
+    </button>
+  `;
+
+  productImage.appendChild(quickActions);
 }
 
 function quickViewProduct(productId) {
-    // Trigger the existing viewProduct function
-    if (typeof viewProduct === 'function') {
-        viewProduct(productId);
-    }
+  if (typeof viewProduct === 'function') {
+    viewProduct(productId);
+  }
 }
 
 /* ============================================
-   SCROLL TO TOP BUTTON
+   RECENTLY VIEWED PRODUCTS
    ============================================ */
-function initScrollToTop() {
-    // Create scroll to top button if it doesn't exist
-    if (!document.querySelector('.scroll-to-top')) {
-        const scrollBtn = document.createElement('button');
-        scrollBtn.className = 'scroll-to-top';
-        scrollBtn.innerHTML = '↑';
-        scrollBtn.setAttribute('aria-label', 'Scroll to top');
-        scrollBtn.addEventListener('click', scrollToTop);
-        document.body.appendChild(scrollBtn);
-    }
-    
-    // Show/hide scroll to top button
-    window.addEventListener('scroll', () => {
-        const scrollBtn = document.querySelector('.scroll-to-top');
-        if (scrollBtn) {
-            if (window.pageYOffset > 300) {
-                scrollBtn.classList.add('visible');
-            } else {
-                scrollBtn.classList.remove('visible');
-            }
-        }
-    });
+const RECENTLY_VIEWED_KEY = 'recentlyViewed';
+const MAX_RECENT_ITEMS = 6;
+
+function addToRecentlyViewed(productId) {
+  let recent =
+    JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY)) || [];
+
+  productId = String(productId);
+
+  recent = recent.filter((id) => id !== productId);
+  recent.unshift(productId);
+
+  if (recent.length > MAX_RECENT_ITEMS) {
+    recent = recent.slice(0, MAX_RECENT_ITEMS);
+  }
+
+  localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recent));
 }
 
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+function renderRecentlyViewed() {
+  const container = document.getElementById('recently-viewed');
+  if (!container) return;
+
+  const recent =
+    JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY)) || [];
+
+  if (recent.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+  container.innerHTML = '<h3>Recently Viewed</h3>';
+
+  const grid = document.createElement('div');
+  grid.className = 'products-grid';
+
+  recent.forEach((id) => {
+    const product = dataManager.getProductById(id);
+    if (!product) return;
+
+    const card = document.createElement('div');
+    card.className = 'product-card scale-in';
+    card.innerHTML = `
+      <div class="product-image" onclick="viewProduct('${product.id}')">
+        <img src="${product.image}" alt="${product.name}">
+      </div>
+      <div class="product-info">
+        <h4 class="product-name">${product.name}</h4>
+        <div class="product-price">₹${product.price}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  container.appendChild(grid);
+}
+
+/* ============================================
+   SCROLL TO TOP
+   ============================================ */
+function initScrollToTop() {
+  if (!document.querySelector('.scroll-to-top')) {
+    const btn = document.createElement('button');
+    btn.className = 'scroll-to-top';
+    btn.innerHTML = '↑';
+    btn.addEventListener('click', () =>
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    );
+    document.body.appendChild(btn);
+  }
+
+  window.addEventListener('scroll', () => {
+    const btn = document.querySelector('.scroll-to-top');
+    if (!btn) return;
+    btn.classList.toggle('visible', window.pageYOffset > 300);
+  });
 }
 
 /* ============================================
    ANIMATIONS
    ============================================ */
 function initAnimations() {
-    // Animate cart icon when items are added
-    const originalAddToCart = window.quickAddToCart;
-    if (originalAddToCart) {
-        window.quickAddToCart = function(productId) {
-            const result = originalAddToCart(productId);
-            animateCartIcon();
-            return result;
-        };
-    }
+  const originalAddToCart = window.quickAddToCart;
+  if (!originalAddToCart) return;
+
+  window.quickAddToCart = function (productId) {
+    const result = originalAddToCart(productId);
+    animateCartIcon();
+    return result;
+  };
 }
 
 function animateCartIcon() {
-    const cartLink = document.querySelector('nav a[href="cart.html"]');
-    if (cartLink) {
-        cartLink.classList.add('cart-icon-animated');
-        setTimeout(() => {
-            cartLink.classList.remove('cart-icon-animated');
-        }, 500);
-    }
+  const cartLink = document.querySelector('nav a[href="cart.html"]');
+  if (!cartLink) return;
+
+  cartLink.classList.add('cart-icon-animated');
+  setTimeout(
+    () => cartLink.classList.remove('cart-icon-animated'),
+    500
+  );
 }
 
 /* ============================================
-   LOADING STATES
-   ============================================ */
-function showLoadingOverlay() {
-    if (document.querySelector('.loading-overlay')) return;
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'loading-overlay';
-    overlay.innerHTML = '<div class="loading-spinner"></div>';
-    document.body.appendChild(overlay);
-}
-
-function hideLoadingOverlay() {
-    const overlay = document.querySelector('.loading-overlay');
-    if (overlay) {
-        overlay.remove();
-    }
-}
-
-/* ============================================
-   SKELETON LOADING
-   ============================================ */
-function showSkeletonCards(count = 6) {
-    const grid = document.getElementById('products-grid');
-    if (!grid) return;
-    
-    grid.innerHTML = '';
-    
-    for (let i = 0; i < count; i++) {
-        const skeleton = document.createElement('div');
-        skeleton.className = 'skeleton skeleton-card';
-        grid.appendChild(skeleton);
-    }
-}
-
-/* ============================================
-   ENHANCED TOAST NOTIFICATIONS
+   TOAST NOTIFICATIONS
    ============================================ */
 function showToast(message, type = 'info') {
-    const toast = document.getElementById('toast') || createToast();
-    
-    toast.textContent = message;
-    toast.className = `toast ${type} show`;
-    
-    setTimeout(() => {
-        toast.className = 'toast';
-    }, 3000);
+  const toast = document.getElementById('toast') || createToast();
+  toast.textContent = message;
+  toast.className = `toast ${type} show`;
+
+  setTimeout(() => {
+    toast.className = 'toast';
+  }, 3000);
 }
 
 function createToast() {
-    const toast = document.createElement('div');
-    toast.id = 'toast';
-    toast.className = 'toast';
-    document.body.appendChild(toast);
-    return toast;
+  const toast = document.createElement('div');
+  toast.id = 'toast';
+  toast.className = 'toast';
+  document.body.appendChild(toast);
+  return toast;
 }
 
 /* ============================================
-   UTILITY FUNCTIONS
+   GLOBAL EXPORTS
    ============================================ */
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
-}
-
-/* ============================================
-   EXPORT FUNCTIONS FOR GLOBAL USE
-   ============================================ */
-window.toggleWishlist = toggleWishlist;
 window.quickViewProduct = quickViewProduct;
 window.showToast = showToast;
-window.showLoadingOverlay = showLoadingOverlay;
-window.hideLoadingOverlay = hideLoadingOverlay;
-window.showSkeletonCards = showSkeletonCards;
+window.addToRecentlyViewed = addToRecentlyViewed;
 
-console.log('🎨 Froakie TCG Enhancements v1.0 loaded!');
+console.log('🎨 Froakie TCG Enhancements (Recently Viewed enabled) loaded!');
