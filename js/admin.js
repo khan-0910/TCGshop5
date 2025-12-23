@@ -1,5 +1,44 @@
 // ==================== ADMIN PANEL ====================
 // Froakie TCG Admin – Product & Order Management
+// ==================== ADMIN AUTH ====================
+
+const ADMIN_PASSWORD = 'admin123'; // change later
+
+document.addEventListener('DOMContentLoaded', () => {
+    const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+
+    if (isLoggedIn === 'true') {
+        showAdminPanel();
+    }
+});
+
+function checkPassword(event) {
+    event.preventDefault();
+
+    const input = document.getElementById('admin-password');
+    if (!input) return;
+
+    if (input.value === ADMIN_PASSWORD) {
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        showAdminPanel();
+        showToast('Login successful', 'success');
+    } else {
+        showToast('Incorrect password', 'error');
+        input.value = '';
+        input.focus();
+    }
+}
+
+function logoutAdmin() {
+    sessionStorage.removeItem('adminLoggedIn');
+    location.reload();
+}
+
+function showAdminPanel() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+}
+
 
 let currentEditingId = null;
 let currentImageData = null;
@@ -236,3 +275,4 @@ function showToast(msg, type = 'info') {
     toast.className = `toast ${type} show`;
     setTimeout(() => (toast.className = 'toast'), 3000);
 }
+
