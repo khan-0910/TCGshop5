@@ -1,21 +1,26 @@
-// Admin Panel functionality for Pokemon Cards Store
-// Handles product management (CRUD operations) and order viewing
+// ==================== ADMIN PANEL ====================
+// Froakie TCG Admin – Product & Order Management
 
 let currentEditingId = null;
 let currentImageData = null;
 let allOrders = [];
 let currentSection = 'products';
 
-/* ==================== INIT ==================== */
+// ==================== INIT ====================
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!window.API_CONFIG) {
+        console.error('API_CONFIG not loaded');
+        return;
+    }
+
     await dataManager.refreshProducts();
     loadProductsTable();
     updateStatistics();
     updateCartCount();
 });
 
-/* ==================== SECTION SWITCH ==================== */
+// ==================== NAV ====================
 
 function showSection(section) {
     currentSection = section;
@@ -39,17 +44,31 @@ function showSection(section) {
     if (section === 'orders') loadOrders();
 }
 
-/* ==================== PRODUCTS ==================== */
+// ==================== PRODUCTS ====================
 
-function loadProductsTable() {
+function showAddProductForm() {
+    currentEditingId = null;
+    currentImageData = null;
+
+    document.getElementById('form-title').textContent = 'Add New Product';
+    document.getElementById('product-form-element').reset();
+    document.getElementById('product-id').value = '';
+
+    const preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+    preview.classList.add('empty');
+
+    document.getElementById('product-form').style.display = 'block';
+    document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function loadProductsTable() {
     const products = dataManager.getProducts();
     const tbody = document.getElementById('products-table-body');
 
     if (!products.length) {
         tbody.innerHTML =
-            `<tr><td colspan="7" style="text-align:center;padding:2rem;">
-                No products found. Add your first product!
-            </td></tr>`;
+            '<tr><td colspan="7" style="text-align:center;padding:2rem;">No products found</td></tr>';
         return;
     }
 
@@ -60,16 +79,13 @@ function loadProductsTable() {
 function createProductRow(product) {
     const row = document.createElement('tr');
 
-    const stockClass =
-        product.stock === 0 ? 'stock-out' :
-        product.stock < 5 ? 'stock-low' : 'stock-good';
-
     row.innerHTML = `
         <td><img src="${product.image}" width="60"></td>
         <td>${product.name}</td>
         <td>₹${product.price.toFixed(2)}</td>
         <td>₹${product.marketPrice.toFixed(2)}</td>
-        <td class="${stockClass}">${product.stock}</td>
+        <td>${product.stock}</td>
+        <td><a href="${product.marketUrl}" target="_blank">${product.marketSource}</a></td>
         <td>
             <button onclick="editProduct('${product._id}')">Edit</button>
             <button onclick="deleteProduct('${product._id}')">Delete</button>
@@ -78,15 +94,6 @@ function createProductRow(product) {
     return row;
 }
 
-function showAddProductForm() {
-    currentEditingId = null;
-    currentImageData = null;
-    document.getElementById('product-form-element').reset();
-    document.getElementById('product-form').style.display = 'block';
-}
-
-/* ==================== EDIT ==================== */
-
 function editProduct(id) {
     const product = dataManager.getProductById(id);
     if (!product) return;
@@ -94,6 +101,7 @@ function editProduct(id) {
     currentEditingId = id;
     currentImageData = product.image;
 
+    document.getElementById('form-title').textContent = 'Edit Product';
     document.getElementById('product-name').value = product.name;
     document.getElementById('product-price').value = product.price;
     document.getElementById('product-stock').value = product.stock;
@@ -102,37 +110,37 @@ function editProduct(id) {
     document.getElementById('product-market-url').value = product.marketUrl;
     document.getElementById('product-market-source').value = product.marketSource;
     document.getElementById('product-category').value = product.category;
+    document.getElementById('product-image-url').value = product.image;
+
+    document.getElementById('image-preview').innerHTML =
+        `<img src="${product.image}" width="120">`;
 
     document.getElementById('product-form').style.display = 'block';
 }
 
-/* ==================== DELETE ==================== */
-
 async function deleteProduct(id) {
     if (!confirm('Delete this product?')) return;
 
-    const res = await fetch(
-        `${API_CONFIG.BASE_URL}/api/products/${id}`,
-        { method: 'DELETE' }
-    );
+    try {
+        const res = await fetch(`${API_CONFIG.BASE_URL}/api/products/${id}`, {
+            method: 'DELETE'
+        });
 
-    if (!res.ok) {
+        if (!res.ok) throw new Error();
+
+        await dataManager.refreshProducts();
+        loadProductsTable();
+        updateStatistics();
+        showToast('Product deleted', 'success');
+    } catch {
         showToast('Delete failed', 'error');
-        return;
     }
-
-    await dataManager.refreshProducts();
-    loadProductsTable();
-    updateStatistics();
-    showToast('Product deleted', 'success');
 }
-
-/* ==================== SAVE ==================== */
 
 async function saveProduct(e) {
     e.preventDefault();
 
-    const productData = {
+    const data = {
         name: product-name.value.trim(),
         price: Number(product-price.value),
         stock: Number(product-stock.value),
@@ -141,31 +149,39 @@ async function saveProduct(e) {
         marketUrl: product-market-url.value.trim(),
         marketSource: product-market-source.value.trim(),
         category: product-category.value,
-        image: currentImageData || product-image-url.value
+        image:
+            currentImageData ||
+            product-image-url.value.trim() ||
+            'https://via.placeholder.com/300x420?text=No+Image'
     };
 
-    const url = currentEditingId
-        ? `${API_CONFIG.BASE_URL}/api/products/${currentEditingId}`
-        : `${API_CONFIG.BASE_URL}/api/products`;
+    try {
+        const url = currentEditingId
+            ? `${API_CONFIG.BASE_URL}/api/products/${currentEditingId}`
+            : `${API_CONFIG.BASE_URL}/api/products`;
 
-    const method = currentEditingId ? 'PUT' : 'POST';
+        const method = currentEditingId ? 'PUT' : 'POST';
 
-    const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(productData)
-    });
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
 
-    if (!res.ok) {
+        if (!res.ok) throw new Error();
+
+        await dataManager.refreshProducts();
+        cancelForm();
+        loadProductsTable();
+        updateStatistics();
+
+        showToast(
+            currentEditingId ? 'Product updated' : 'Product added',
+            'success'
+        );
+    } catch {
         showToast('Save failed', 'error');
-        return;
     }
-
-    await dataManager.refreshProducts();
-    loadProductsTable();
-    updateStatistics();
-    cancelForm();
-    showToast('Product saved', 'success');
 }
 
 function cancelForm() {
@@ -174,30 +190,37 @@ function cancelForm() {
     currentImageData = null;
 }
 
-/* ==================== ORDERS ==================== */
+// ==================== ORDERS ====================
 
 async function loadOrders() {
-    const res = await fetch(`${API_CONFIG.BASE_URL}/api/orders`);
-    const data = await res.json();
-    allOrders = data.orders || [];
-    displayOrders(allOrders);
+    try {
+        const res = await fetch(`${API_CONFIG.BASE_URL}/api/orders`);
+        const data = await res.json();
+        allOrders = data.orders || [];
+        displayOrders(allOrders);
+    } catch {
+        showToast('Failed to load orders', 'error');
+    }
 }
 
 function displayOrders(orders) {
     const tbody = document.getElementById('orders-table-body');
     tbody.innerHTML = '';
+
     orders.forEach(o => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
+        const row = document.createElement('tr');
+        row.innerHTML = `
             <td>${o.orderId}</td>
-            <td>${o.status}</td>
+            <td>${o.customer?.name || ''}</td>
+            <td>${o.items?.length || 0}</td>
             <td>₹${o.total.toFixed(2)}</td>
+            <td>${o.status}</td>
         `;
-        tbody.appendChild(tr);
+        tbody.appendChild(row);
     });
 }
 
-/* ==================== STATS ==================== */
+// ==================== COMMON ====================
 
 function updateStatistics() {
     const products = dataManager.getProducts();
@@ -208,9 +231,8 @@ function updateCartCount() {
     cart-count.textContent = dataManager.getCartItemCount();
 }
 
-function showToast(msg, type) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `toast ${type} show`;
-    setTimeout(() => t.className = 'toast', 3000);
+function showToast(msg, type = 'info') {
+    toast.textContent = msg;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => (toast.className = 'toast'), 3000);
 }
