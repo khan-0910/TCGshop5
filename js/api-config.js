@@ -1,43 +1,52 @@
 // API Configuration
 // Backend API URL - Update this with your deployed backend URL
 
+// Backend API URL
 const API_CONFIG = {
-    // Backend API Base URL
     BASE_URL: 'https://backend-for-tcgshop.onrender.com',
-    
-    // API Endpoints
+
     endpoints: {
-        // Product endpoints
         products: '/api/products',
         productById: (id) => `/api/products/${id}`,
-        
-        // Order endpoints
+        orders: '/api/orders',
         createOrder: '/api/create-order',
         verifyPayment: '/api/verify-payment',
-        orders: '/api/orders',
-        orderById: (id) => `/api/orders/${id}`,
-        
-        // Initialize endpoint
-        initialize: '/api/initialize',
-        
-        // Health check
-        health: '/'
-    },
-    
-    // Request timeout (milliseconds)
-    timeout: 30000,
-    
-    // Retry configuration
-    retry: {
-        attempts: 3,
-        delay: 1000
+        initialize: '/api/initialize'
     }
 };
 
-// Helper function to get full API URL
+// Build full API URL
 function getApiUrl(endpoint) {
-    return `${API_CONFIG.baseURL}${endpoint}`;
+    return `${API_CONFIG.BASE_URL}${endpoint}`;
 }
+
+// Safe API request helper
+async function apiRequest(endpoint, options = {}) {
+    const url = getApiUrl(endpoint);
+
+    const response = await fetch(url, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options
+    });
+
+    // Handle non-JSON responses safely
+    const text = await response.text();
+
+    let data;
+    try {
+        data = text ? JSON.parse(text) : {};
+    } catch {
+        throw new Error('Invalid JSON response from server');
+    }
+
+    if (!response.ok) {
+        throw new Error(data.message || 'API request failed');
+    }
+
+    return data;
+}
+
+
 
 // Helper function to make API requests with error handling
 async function apiRequest(endpoint, options = {}) {
@@ -63,4 +72,5 @@ async function apiRequest(endpoint, options = {}) {
         throw error;
     }
 }
+
 
