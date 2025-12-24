@@ -7,7 +7,7 @@ function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.className = `toast ${type} show`;
-    setTimeout(() => toast.className = 'toast', 3000);
+    setTimeout(() => (toast.className = 'toast'), 3000);
 }
 
 /* ------------------ LOGIN ------------------ */
@@ -36,6 +36,7 @@ function logout() {
     location.reload();
 }
 
+/* ------------------ INIT ------------------ */
 document.addEventListener('DOMContentLoaded', async () => {
     if (sessionStorage.getItem('adminLoggedIn') === 'true') {
         showAdminPanel();
@@ -49,8 +50,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 function showAddProductForm() {
     currentEditingId = null;
     currentImageData = null;
-    document.getElementById('product-form').style.display = 'block';
     document.getElementById('product-form-element').reset();
+    document.getElementById('product-form').style.display = 'block';
 }
 
 async function loadProductsTable() {
@@ -58,11 +59,16 @@ async function loadProductsTable() {
     const tbody = document.getElementById('products-table-body');
     tbody.innerHTML = '';
 
+    if (!products.length) {
+        tbody.innerHTML = `<tr><td colspan="4">No products found</td></tr>`;
+        return;
+    }
+
     products.forEach(p => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${p.name}</td>
-            <td>₹${p.price}</td>
+            <td>₹${p.price.toFixed(2)}</td>
             <td>${p.stock}</td>
             <td>
                 <button onclick="editProduct('${p._id}')">Edit</button>
@@ -78,6 +84,7 @@ function editProduct(id) {
     if (!p) return;
 
     currentEditingId = id;
+
     document.getElementById('product-name').value = p.name;
     document.getElementById('product-price').value = p.price;
     document.getElementById('product-stock').value = p.stock;
@@ -86,6 +93,8 @@ function editProduct(id) {
     document.getElementById('product-market-url').value = p.marketUrl;
     document.getElementById('product-market-source').value = p.marketSource;
     document.getElementById('product-category').value = p.category;
+    document.getElementById('product-image-url').value = p.image || '';
+
     document.getElementById('product-form').style.display = 'block';
 }
 
@@ -93,24 +102,27 @@ async function saveProduct(e) {
     e.preventDefault();
 
     const productData = {
-        name: product-name.value,
-        price: Number(product-price.value),
-        stock: Number(product-stock.value),
-        marketPrice: Number(product-market-price.value),
-        description: product-description.value,
-        marketUrl: product-market-url.value,
-        marketSource: product-market-source.value,
-        category: product-category.value,
-        image: currentImageData || product-image-url.value
+        name: document.getElementById('product-name').value.trim(),
+        price: Number(document.getElementById('product-price').value),
+        stock: Number(document.getElementById('product-stock').value),
+        marketPrice: Number(document.getElementById('product-market-price').value),
+        description: document.getElementById('product-description').value.trim(),
+        marketUrl: document.getElementById('product-market-url').value.trim(),
+        marketSource: document.getElementById('product-market-source').value.trim(),
+        category: document.getElementById('product-category').value,
+        image:
+            currentImageData ||
+            document.getElementById('product-image-url').value.trim() ||
+            'https://via.placeholder.com/300x420?text=No+Image'
     };
 
-    const url = currentEditingId
-        ? getApiUrl(`/api/products/${currentEditingId}`)
-        : getApiUrl('/api/products');
+    const endpoint = currentEditingId
+        ? `/api/products/${currentEditingId}`
+        : `/api/products`;
 
     const method = currentEditingId ? 'PUT' : 'POST';
 
-    const res = await fetch(url, {
+    const res = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(productData)
@@ -130,7 +142,7 @@ async function saveProduct(e) {
 async function deleteProduct(id) {
     if (!confirm('Delete product?')) return;
 
-    const res = await fetch(getApiUrl(`/api/products/${id}`), {
+    const res = await fetch(`${API_CONFIG.BASE_URL}/api/products/${id}`, {
         method: 'DELETE'
     });
 
@@ -139,7 +151,7 @@ async function deleteProduct(id) {
         return;
     }
 
-    showToast('Deleted', 'success');
+    showToast('Product deleted', 'success');
     await dataManager.refreshProducts();
     loadProductsTable();
 }
