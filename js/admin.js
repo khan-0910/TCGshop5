@@ -1,65 +1,19 @@
 // ==================== ADMIN PANEL ====================
-// Froakie TCG Admin – Product & Order Management
-// ==================== ADMIN AUTH ====================
-
-const ADMIN_PASSWORD = 'admin123'; // change later
-
-document.addEventListener('DOMContentLoaded', () => {
-    const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
-
-    if (isLoggedIn === 'true') {
-        showAdminPanel();
-    }
-});
-
-function checkPassword(event) {
-    event.preventDefault();
-
-    const input = document.getElementById('admin-password');
-    if (!input) return;
-
-    if (input.value === ADMIN_PASSWORD) {
-        sessionStorage.setItem('adminLoggedIn', 'true');
-        showAdminPanel();
-        showToast('Login successful', 'success');
-    } else {
-        showToast('Incorrect password', 'error');
-        input.value = '';
-        input.focus();
-    }
-}
-
-function logoutAdmin() {
-    sessionStorage.removeItem('adminLoggedIn');
-    location.reload();
-}
-
-function showAdminPanel() {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-panel').style.display = 'block';
-}
-
 
 let currentEditingId = null;
 let currentImageData = null;
 let allOrders = [];
 let currentSection = 'products';
 
-// ==================== INIT ====================
-
+// Init
 document.addEventListener('DOMContentLoaded', async () => {
-    if (!window.API_CONFIG) {
-        console.error('API_CONFIG not loaded');
-        return;
-    }
-
     await dataManager.refreshProducts();
     loadProductsTable();
     updateStatistics();
     updateCartCount();
 });
 
-// ==================== NAV ====================
+// ==================== SECTIONS ====================
 
 function showSection(section) {
     currentSection = section;
@@ -68,9 +22,6 @@ function showSection(section) {
         section === 'products' ? 'var(--primary-color)' : '#95a5a6';
     document.getElementById('orders-tab').style.background =
         section === 'orders' ? 'var(--primary-color)' : '#95a5a6';
-
-    document.getElementById('section-title').textContent =
-        section === 'products' ? 'Product Management' : 'Orders Management';
 
     document.getElementById('products-section').style.display =
         section === 'products' ? 'block' : 'none';
@@ -85,194 +36,133 @@ function showSection(section) {
 
 // ==================== PRODUCTS ====================
 
-function showAddProductForm() {
-    currentEditingId = null;
-    currentImageData = null;
-
-    document.getElementById('form-title').textContent = 'Add New Product';
-    document.getElementById('product-form-element').reset();
-    document.getElementById('product-id').value = '';
-
-    const preview = document.getElementById('image-preview');
-    preview.innerHTML = '';
-    preview.classList.add('empty');
-
-    document.getElementById('product-form').style.display = 'block';
-    document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
-}
-
-async function loadProductsTable() {
-    const products = dataManager.getProducts();
+function loadProductsTable() {
     const tbody = document.getElementById('products-table-body');
+    const products = dataManager.getProducts();
+
+    tbody.innerHTML = '';
 
     if (!products.length) {
         tbody.innerHTML =
-            '<tr><td colspan="7" style="text-align:center;padding:2rem;">No products found</td></tr>';
+            `<tr><td colspan="7" style="text-align:center">No products</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = '';
-    products.forEach(p => tbody.appendChild(createProductRow(p)));
+    products.forEach(p => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><img src="${p.image}" width="60"></td>
+            <td>${p.name}</td>
+            <td>₹${p.price.toFixed(2)}</td>
+            <td>₹${p.marketPrice.toFixed(2)}</td>
+            <td>${p.stock}</td>
+            <td>${p.marketSource}</td>
+            <td>
+                <button onclick="editProduct('${p._id}')">Edit</button>
+                <button onclick="deleteProduct('${p._id}')">Delete</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
 }
 
-function createProductRow(product) {
-    const row = document.createElement('tr');
-
-    row.innerHTML = `
-        <td><img src="${product.image}" width="60"></td>
-        <td>${product.name}</td>
-        <td>₹${product.price.toFixed(2)}</td>
-        <td>₹${product.marketPrice.toFixed(2)}</td>
-        <td>${product.stock}</td>
-        <td><a href="${product.marketUrl}" target="_blank">${product.marketSource}</a></td>
-        <td>
-            <button onclick="editProduct('${product._id}')">Edit</button>
-            <button onclick="deleteProduct('${product._id}')">Delete</button>
-        </td>
-    `;
-    return row;
+function showAddProductForm() {
+    currentEditingId = null;
+    currentImageData = null;
+    document.getElementById('product-form').style.display = 'block';
 }
 
 function editProduct(id) {
-    const product = dataManager.getProductById(id);
-    if (!product) return;
+    const p = dataManager.getProductById(id);
+    if (!p) return;
 
     currentEditingId = id;
-    currentImageData = product.image;
+    currentImageData = p.image;
 
-    document.getElementById('form-title').textContent = 'Edit Product';
-    document.getElementById('product-name').value = product.name;
-    document.getElementById('product-price').value = product.price;
-    document.getElementById('product-stock').value = product.stock;
-    document.getElementById('product-market-price').value = product.marketPrice;
-    document.getElementById('product-description').value = product.description;
-    document.getElementById('product-market-url').value = product.marketUrl;
-    document.getElementById('product-market-source').value = product.marketSource;
-    document.getElementById('product-category').value = product.category;
-    document.getElementById('product-image-url').value = product.image;
-
-    document.getElementById('image-preview').innerHTML =
-        `<img src="${product.image}" width="120">`;
+    document.getElementById('product-name').value = p.name;
+    document.getElementById('product-price').value = p.price;
+    document.getElementById('product-stock').value = p.stock;
+    document.getElementById('product-market-price').value = p.marketPrice;
+    document.getElementById('product-description').value = p.description;
+    document.getElementById('product-market-url').value = p.marketUrl;
+    document.getElementById('product-market-source').value = p.marketSource;
+    document.getElementById('product-category').value = p.category;
 
     document.getElementById('product-form').style.display = 'block';
 }
 
 async function deleteProduct(id) {
-    if (!confirm('Delete this product?')) return;
+    if (!confirm('Delete product?')) return;
 
-    try {
-        const res = await fetch(`${API_CONFIG.BASE_URL}/api/products/${id}`, {
-            method: 'DELETE'
-        });
+    const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    if (!res.ok) return showToast('Delete failed', 'error');
 
-        if (!res.ok) throw new Error();
-
-        await dataManager.refreshProducts();
-        loadProductsTable();
-        updateStatistics();
-        showToast('Product deleted', 'success');
-    } catch {
-        showToast('Delete failed', 'error');
-    }
+    await dataManager.refreshProducts();
+    loadProductsTable();
+    updateStatistics();
+    showToast('Product deleted', 'success');
 }
 
 async function saveProduct(e) {
     e.preventDefault();
 
     const data = {
-        name: product-name.value.trim(),
-        price: Number(product-price.value),
-        stock: Number(product-stock.value),
-        marketPrice: Number(product-market-price.value),
-        description: product-description.value.trim(),
-        marketUrl: product-market-url.value.trim(),
-        marketSource: product-market-source.value.trim(),
-        category: product-category.value,
-        image:
-            currentImageData ||
-            product-image-url.value.trim() ||
-            'https://via.placeholder.com/300x420?text=No+Image'
+        name: productName.value,
+        price: Number(productPrice.value),
+        stock: Number(productStock.value),
+        marketPrice: Number(productMarketPrice.value),
+        description: productDescription.value,
+        marketUrl: productMarketUrl.value,
+        marketSource: productMarketSource.value,
+        category: productCategory.value,
+        image: currentImageData || productImageUrl.value
     };
 
-    try {
-        const url = currentEditingId
-            ? `${API_CONFIG.BASE_URL}/api/products/${currentEditingId}`
-            : `${API_CONFIG.BASE_URL}/api/products`;
+    const url = currentEditingId
+        ? `/api/products/${currentEditingId}`
+        : `/api/products`;
 
-        const method = currentEditingId ? 'PUT' : 'POST';
+    const method = currentEditingId ? 'PUT' : 'POST';
 
-        const res = await fetch(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
+    const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
 
-        if (!res.ok) throw new Error();
+    if (!res.ok) return showToast('Save failed', 'error');
 
-        await dataManager.refreshProducts();
-        cancelForm();
-        loadProductsTable();
-        updateStatistics();
-
-        showToast(
-            currentEditingId ? 'Product updated' : 'Product added',
-            'success'
-        );
-    } catch {
-        showToast('Save failed', 'error');
-    }
+    await dataManager.refreshProducts();
+    loadProductsTable();
+    updateStatistics();
+    showToast('Saved', 'success');
+    cancelForm();
 }
 
 function cancelForm() {
     document.getElementById('product-form').style.display = 'none';
     currentEditingId = null;
-    currentImageData = null;
 }
 
 // ==================== ORDERS ====================
 
 async function loadOrders() {
-    try {
-        const res = await fetch(`${API_CONFIG.BASE_URL}/api/orders`);
-        const data = await res.json();
-        allOrders = data.orders || [];
-        displayOrders(allOrders);
-    } catch {
-        showToast('Failed to load orders', 'error');
-    }
+    const res = await fetch('/api/orders');
+    if (!res.ok) return;
+
+    const { orders } = await res.json();
+    allOrders = orders;
 }
 
-function displayOrders(orders) {
-    const tbody = document.getElementById('orders-table-body');
-    tbody.innerHTML = '';
-
-    orders.forEach(o => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${o.orderId}</td>
-            <td>${o.customer?.name || ''}</td>
-            <td>${o.items?.length || 0}</td>
-            <td>₹${o.total.toFixed(2)}</td>
-            <td>${o.status}</td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-// ==================== COMMON ====================
+// ==================== STATS ====================
 
 function updateStatistics() {
     const products = dataManager.getProducts();
-    stat-total-products.textContent = products.length;
+    statTotalProducts.textContent = products.length;
+    statStockValue.textContent = '₹' +
+        products.reduce((s, p) => s + p.price * p.stock, 0).toFixed(2);
 }
 
 function updateCartCount() {
-    cart-count.textContent = dataManager.getCartItemCount();
+    cartCount.textContent = dataManager.getCartItemCount();
 }
-
-function showToast(msg, type = 'info') {
-    toast.textContent = msg;
-    toast.className = `toast ${type} show`;
-    setTimeout(() => (toast.className = 'toast'), 3000);
-}
-
